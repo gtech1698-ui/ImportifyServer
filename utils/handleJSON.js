@@ -3,8 +3,8 @@ const { customError } = require('./customError');
 
 // Expected fields
 const expectedFields = [
-    'id', 'category', 'mobile', 'delivery_date',
-    'status', 'city', 'operator', 'state', 'circle', 'user_id'
+ 'category', 'mobile', 'delivery_date',
+    'status', 'city', 'operator', 'state', 'circle'
 ];
 
 function isIntegerString(str) {
@@ -20,9 +20,7 @@ function validateRow(row) {
         }
     }
 
-    if (!isIntegerString(row.id)) return new customError(400, 'Invalid "id"');
     if (!isIntegerString(row.mobile) || row.mobile.trim().length !== 10) return new customError(400, 'Invalid mobile');
-    if (!isIntegerString(row.user_id)) return new customError(400, 'Invalid "user_id"');
     if (!isValidDate(row.delivery_date)) return new customError(400, 'Invalid delivery_date');
 
     return null;
