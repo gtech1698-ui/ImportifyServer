@@ -4,7 +4,7 @@ const { customError } = require('./customError');
 // Expected fields
 const expectedFields = [
  'category', 'mobile', 'delivery_date',
-    'status', 'city', 'operator', 'state', 'circle'
+    'status', 'operator', 'circle'
 ];
 
 function isIntegerString(str) {
