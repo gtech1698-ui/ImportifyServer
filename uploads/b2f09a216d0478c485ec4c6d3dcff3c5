@@ -1,0 +1,10 @@
+id,category,mobile,delivery_date,status,city,operator,state,circle,user_id
+9899999,testing,9820000000,01-06-2025,DELIVRD,Mayapuri,Null,delhi,Null,1100
+9899998,testing,9820000000,01-06-2025,DELIVRD,Mayapuri,Null,delhi,Null,1102
+9899997,testing,9820000000,01-06-2025,DELIVRD,Mayapuri,Null,delhi,Null,1103
+9899996,testing,9820000000,01-06-2025,DELIVRD,Mayapuri,Null,delhi,Null,1104
+9899995,testing,9820000000,01-06-2025,DELIVRD,Mayapuri,Null,delhi,Null,1105
+9899994,testing,9820000000,01-06-2025,DELIVRD,Mayapuri,Null,delhi,Null,1106
+9899993,testing,9820000000,01-06-2025,DELIVRD,Mayapuri,Null,delhi,Null,1107
+9899992,testing,9820000000,01-06-2025,DELIVRD,Mayapuri,Null,delhi,Null,1110
+,,,,,,,,,
