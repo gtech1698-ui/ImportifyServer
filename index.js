@@ -135,7 +135,6 @@ app.post('/import/addFiles', upload.single('datafile'), wrapAsync(async (req, re
       const rows = await handleCSV(filePath);
       overwriteCircle(rows, prefixMap);
       const values = rows.map(row => [
-        parseInt(row.id),
         row.category.trim(),
         row.mobile.trim(),
         new Date(row.delivery_date).toISOString().split('T')[0],
@@ -144,15 +143,14 @@ app.post('/import/addFiles', upload.single('datafile'), wrapAsync(async (req, re
         row.operator.trim(),
         row.state.trim(),
         row.circle.trim(),
-        parseInt(row.user_id)
       ]);
 
-      const placeholders = values.map(() => '(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').join(', ');
+      const placeholders = values.map(() => '(?, ?, ?, ?, ?, ?, ?, ?)').join(', ');
       const flattened = values.flat();
 
       const bulkQuery = `
         INSERT INTO deliveries
-        (id, category, mobile, delivery_date, status, city, operator, state, circle, user_id)
+        (category, mobile, delivery_date, status, city, operator, state, circle)
         VALUES ${placeholders}
       `;
 
@@ -191,7 +189,6 @@ app.post('/import/addFiles', upload.single('datafile'), wrapAsync(async (req, re
       const rows = await handleJSON(filePath);
       overwriteCircle(rows, prefixMap);
       const values = rows.map(row => [
-        parseInt(row.id),
         row.category.trim(),
         row.mobile.trim(),
         new Date(row.delivery_date).toISOString().split('T')[0],
@@ -199,16 +196,15 @@ app.post('/import/addFiles', upload.single('datafile'), wrapAsync(async (req, re
         row.city.trim(),
         row.operator.trim(),
         row.state.trim(),
-        row.circle.trim(),
-        parseInt(row.user_id)
+        row.circle.trim()
       ]);
 
-      const placeholders = values.map(() => '(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').join(', ');
+      const placeholders = values.map(() => '(?, ?, ?, ?, ?, ?, ?, ?)').join(', ');
       const flattened = values.flat();
 
       const bulkQuery = `
       INSERT INTO deliveries
-      (id, category, mobile, delivery_date, status, city, operator, state, circle, user_id)
+      ( category, mobile, delivery_date, status, city, operator, state, circle)
       VALUES ${placeholders}
     `;
 
