@@ -139,9 +139,9 @@ app.post('/import/addFiles', upload.single('datafile'), wrapAsync(async (req, re
         row.mobile.trim(),
         new Date(row.delivery_date).toISOString().split('T')[0],
         row.status.trim(),
-        row.city.trim(),
+        row.city,
         row.operator.trim(),
-        row.state.trim(),
+        row.state,
         row.circle.trim(),
       ]);
 
@@ -193,9 +193,9 @@ app.post('/import/addFiles', upload.single('datafile'), wrapAsync(async (req, re
         row.mobile.trim(),
         new Date(row.delivery_date).toISOString().split('T')[0],
         row.status.trim(),
-        row.city.trim(),
+        row.city,
         row.operator.trim(),
-        row.state.trim(),
+        row.state,
         row.circle.trim()
       ]);
 
