@@ -5,7 +5,7 @@ const customError = require('./customError');
 // Expected schema columns
 const expectedColumns = [
   'category', 'mobile', 'delivery_date',
-  'status', 'city', 'operator', 'state', 'circle'
+  'status', 'operator', 'circle'
 ];
 
 // Helper to check if string is an integer
@@ -21,7 +21,7 @@ const isValidDate = (str) => !isNaN(Date.parse(str));
 function validateRow(row) {
   const requiredFields = [
     'category', 'mobile', 'delivery_date',
-    'status', 'city', 'operator', 'state', 'circle'
+    'status', 'operator', 'circle'
   ];
 
   for (const field of requiredFields) {
