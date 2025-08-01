@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 const mysql = require('mysql2');
 require('dotenv').config();
-let port = process.env.PORT
+let port = 3000
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
 const wrapAsync = require('./utils/wrapAsync.js');
