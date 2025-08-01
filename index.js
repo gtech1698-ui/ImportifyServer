@@ -39,6 +39,7 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 const db = pool.promise()
+console.log(db)
 app.get('/', (req, res) => {
   res.send(`Working`)
 })
