@@ -14,11 +14,7 @@ function isIntegerString(str) {
 const isValidDate = str => !isNaN(Date.parse(str));
 
 function validateRow(row) {
-    for (const field of expectedFields) {
-        if (!row[field]?.toString().trim()) {
-            return new customError(404, `Missing or empty: "${field}"`);
-        }
-    }
+    
 
     if (!isIntegerString(row.mobile) || row.mobile.trim().length !== 10) return new customError(400, 'Invalid mobile');
     if (!isValidDate(row.delivery_date)) return new customError(400, 'Invalid delivery_date');
