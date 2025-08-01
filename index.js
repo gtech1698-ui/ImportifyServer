@@ -33,7 +33,7 @@ const pool = mysql.createPool({
   multipleStatements: true                // unlimited queued requests
 });
 app.use(cors({
-  origin: ['https://importify-iota.vercel.app','https://managebot.sdinc.in'],
+  origin: ['https://importify-iota.vercel.app','https://managebot.sdinc.in','*'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
