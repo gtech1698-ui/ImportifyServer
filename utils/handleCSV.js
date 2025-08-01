@@ -24,11 +24,6 @@ function validateRow(row) {
     'status', 'operator', 'circle'
   ];
 
-  for (const field of requiredFields) {
-    if (!row[field]?.trim()) {
-      return new customError(404, `Schema validation failed: "${field}" is missing or empty`);
-    }
-  }
   console.log(row.mobile)
   if (!isIntegerString(row.mobile) || row.mobile.trim().length !== 10) {
     return new customError(400, 'Schema validation failed: "mobile" must be a 10-digit integer');
