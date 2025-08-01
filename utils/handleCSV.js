@@ -4,8 +4,8 @@ const customError = require('./customError');
 
 // Expected schema columns
 const expectedColumns = [
-  'id', 'category', 'mobile', 'delivery_date',
-  'status', 'city', 'operator', 'state', 'circle', 'user_id'
+  'category', 'mobile', 'delivery_date',
+  'status', 'city', 'operator', 'state', 'circle'
 ];
 
 // Helper to check if string is an integer
@@ -20,8 +20,8 @@ const isValidDate = (str) => !isNaN(Date.parse(str));
 // Central row validation function
 function validateRow(row) {
   const requiredFields = [
-    'id', 'category', 'mobile', 'delivery_date',
-    'status', 'city', 'operator', 'state', 'circle', 'user_id'
+    'category', 'mobile', 'delivery_date',
+    'status', 'city', 'operator', 'state', 'circle'
   ];
 
   for (const field of requiredFields) {
@@ -29,15 +29,9 @@ function validateRow(row) {
       return new customError(404, `Schema validation failed: "${field}" is missing or empty`);
     }
   }
-  if (!isIntegerString(row.id)) {
-    return new customError(400, 'Schema validation failed: "id" must be an integer');
-  }
   console.log(row.mobile)
   if (!isIntegerString(row.mobile) || row.mobile.trim().length !== 10) {
     return new customError(400, 'Schema validation failed: "mobile" must be a 10-digit integer');
-  }
-  if (!isIntegerString(row.user_id)) {
-    return new customError(400, 'Schema validation failed: "user_id" must be an integer');
   }
   if (!isValidDate(row.delivery_date)) {
     return new customError(400, 'Schema validation failed: "delivery_date" is not a valid date format');
@@ -63,7 +57,6 @@ module.exports.handleCSV = async (filePath) => {
     })
     .on('data', row => {
       if (Object.values(row).every(val => !val?.trim())) return;
-      if (!row.id) console.warn('⚠️ Missing ID:', row);
       const error = validateRow(row);
       if (error) errors.push(error);
       else validRows.push(row);
