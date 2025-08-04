@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
-
+import logo from '../assets/gtech-logo.png'
 export default function Navbar() {
   const hasShownToast = useRef(false);
 
@@ -53,15 +53,15 @@ useEffect(()=>{
 
 })
   return (
-      <div className=' h-[10vh] w-full flex items-center  xl:p-5 bg-[#15151575] gap-[30vw] md:gap-0 lg:gap-0 xl:gap-[30vw] 2xl:gap-[30vw] text-white'>
-    <Link to='/'><div className='text-sm md:text-2xl xl:text-3xl font-bold h-full p-2 mx-5 md:p-0 md:mx-0 xl:p-0 xl:mx-0 xl:w-[20vw] flex justify-center items-center'>🔥Importify</div></Link>
+      <div className=' h-[10vh] w-full flex items-center  xl:p-5 bg-[#15151575] gap-[25vw] md:gap-0 lg:gap-0 xl:gap-[30vw] 2xl:gap-[30vw] text-white '>
+    <Link to='/'><div className='w-16 text-lg md:text-2xl xl:text-3xl font-bold h-full p-2 mx-5 md:p-0 md:mx-0 xl:p-0 xl:mx-0 xl:w-[20vw] flex justify-center items-center'></div><img src={logo} alt="No Image Available" className="w-12" /></Link>
         <div className='flex justify-evenly w-full items-center gap-10'>
           <div className='text-sm hidden md:text-2xl xl:text-2xl font-bold xl:w-auto h-[10vh] md:flex lg:flex xl:flex justify-center items-center'>{`Greetings!! ${user.email}`}</div>
           <div className=' w-[75px] h-[45px]  lg:w-[100px] lg:h-[100px] xl:w-[70px] xl:h-[70px] rounded-full flex justify-center items-center gap-5'>
             <img width="96" height="96" src="https://img.icons8.com/color/96/user-male-circle--v5.png" alt="user-male-circle--v5"/>
           
           <div className="dropdown dropdown-end">
-            <div tabIndex={0} role="button" className=" w-[70px] h-[55px] lg:w-[100px] lg:h-[100px] xl:w-[70px] xl:h-[70px] btn bg-gray-800  rounded-full xl:m-1 text-4xl">📂</div>
+            <div tabIndex={0} role="button" className=" w-[50px] h-[50px] text-2xl lg:w-[100px] lg:h-[100px] xl:w-[70px] xl:h-[70px] btn bg-gray-800  rounded-full xl:m-1 lg:text-4xl">📂</div>
             <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-2xl text-xl font-bold ">
               <Link to='/import'><li><a>Import a file 📂</a></li></Link>
               <Link to='/export'><li><a>Export a file 🥸</a></li></Link>

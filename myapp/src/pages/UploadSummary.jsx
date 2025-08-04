@@ -82,7 +82,7 @@ export default function UploadSummaryPage() {
     const formatTime = (ms) => `${(ms / 1000).toFixed(2)} sec`;
 
     return (
-        <div className="bg-gradient-to-br from-[#f8fafc] to-[#e2e8f0] text-[#334155] rounded-xl shadow-xl xl:h-[100vh] w-[100vw] flex flex-col gap-5 justify-start items-center" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+        <div className="bg-gradient-to-br from-[#f8fafc] to-[#e2e8f0] text-[#334155] rounded-xl shadow-xl h-[100vh] xl:h-[100vh] w-[100vw] flex flex-col gap-5 justify-start items-center" style={{ fontFamily: 'Montserrat, sans-serif' }}>
             <Navbar />
             <div className="bg-white/90 backdrop-blur-lg xl:h-[20vh] w-[90vw] rounded-3xl flex justify-center items-center m-5 border border-[#e5e7eb]" >
                 <div className="w-full flex flex-col items-center">
@@ -101,7 +101,7 @@ export default function UploadSummaryPage() {
                         </select>
                         <button
                             onClick={() => { setPage(1); fetchUploadSummary(1); }}
-                            className="px-6 py-2 rounded-full bg-gradient-to-r from-[#2563eb] to-[#60a5fa] hover:scale-105 hover:shadow-xl text-white font-bold text-xl shadow-lg transition duration-150 ease-in-out"
+                            className="text-sm md:text-xl px-6 py-2 rounded-full bg-gradient-to-r from-[#2563eb] to-[#60a5fa] hover:scale-105 hover:shadow-xl text-white font-bold xl:text-xl shadow-lg transition duration-150 ease-in-out"
                         >
                             {loading ? (
                                 <Typewriter

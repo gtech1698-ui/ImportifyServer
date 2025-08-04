@@ -2,9 +2,9 @@ import { Typewriter } from 'react-simple-typewriter';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/navbar';
 
-// ...existing imports...
 export default function Homepage() {
   const navigate = useNavigate();
+
   const handleDelivery = () => {
     navigate('/table');
   };
@@ -18,7 +18,7 @@ export default function Homepage() {
       style={{ fontFamily: 'Montserrat, sans-serif', overflow: 'hidden' }}
     >
       <Navbar />
-      <div className="mt-10 mb-8 text-4xl xl:text-6xl font-extrabold bg-gradient-to-r from-[#2563eb] via-[#60a5fa] to-[#38bdf8] bg-clip-text text-transparent drop-shadow-lg">
+      <div className="mt-10 text-4xl xl:text-6xl font-extrabold bg-gradient-to-r from-[#2563eb] via-[#60a5fa] to-[#38bdf8] bg-clip-text text-transparent drop-shadow-lg">
         <Typewriter
           words={['Importify - DB Handler']}
           loop={1}
@@ -28,9 +28,19 @@ export default function Homepage() {
           delaySpeed={1500}
         />
       </div>
-      <div className="flex flex-col xl:flex-row flex-nowrap justify-center items-center gap-10 w-[100vw] h-[60vh] px-4 overflow-x-auto">
-        {/* Card Template */}
-        <div className="bg-white/80 border border-[#cbd5e1]  w-full xl:w-[22vw] 2xl:w-[22vw] h-[80%] rounded-2xl shadow-xl p-8 flex flex-col items-center transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-[#2563eb] gap-5">
+
+      {/* Card Container */}
+      <div
+        className="
+          w-[100vw]
+          flex flex-col items-center gap-10
+          xl:flex-row xl:flex-wrap xl:justify-center
+          xl:gap-10 xl:min-h-[80vh]
+          xl:overflow-x-hidden xl:overflow-y-auto 2xl:overflow-x-hidden overflow-y-auto
+        "
+      >
+        {/* Import Card */}
+        <div className="bg-white/80 border border-[#cbd5e1] w-[90%] mb-5 xl:w-[22vw] 2xl:w-[22vw] xl:min-h-[50vh] rounded-2xl shadow-xl p-8 flex flex-col items-center transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-[#2563eb] gap-5">
           <h2 className="text-3xl font-bold text-[#2563eb] flex items-center gap-2 mb-2">
             <i className="fas fa-cloud-upload-alt text-[#60a5fa]"></i> Import Data
           </h2>
@@ -50,7 +60,8 @@ export default function Homepage() {
           </button>
         </div>
 
-        <div className="bg-white/80 border border-[#cbd5e1] w-full xl:w-[22vw]  h-[80%] rounded-2xl shadow-xl p-8 flex flex-col items-center transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-[#2563eb] gap-5">
+        {/* Export Card */}
+        <div className="bg-white/80 border border-[#cbd5e1] w-[90%] mb-5 xl:w-[22vw] xl:min-h-[50vh] rounded-2xl shadow-xl p-8 flex flex-col items-center transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-[#2563eb] gap-5">
           <h2 className="text-3xl font-bold text-[#2563eb] flex items-center gap-2 mb-2">
             <i className="fas fa-cloud-download-alt text-[#38bdf8]"></i> Export Records
           </h2>
@@ -63,14 +74,16 @@ export default function Homepage() {
             <li>Secure export with auth validation</li>
           </ul>
           <button
-            className="mt-auto w-[80%] h-12 rounded-full bg-gradient-to-r from-[#2563eb] to-[#60a5fa] text-white font-bold shadow-lg hover:scale-105 hover:shadow-xl transition"
+            className="mt-auto w-[80%] h-12 rounded-full bg-gradient-to-r from-[#2563eb] to-[#60a5fa]  text-white font-bold shadow-lg hover:scale-105 hover:shadow-xl transition"
             onClick={() => navigate('/export')}
           >
             Export Now
           </button>
         </div>
 
-        <div className="bg-white/80 border border-[#cbd5e1] w-full xl:w-[22vw]  h-[80%] rounded-2xl shadow-xl p-8 flex flex-col items-center transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-[#2563eb] gap-5">
+        {/* Tabular View Card */}
+        <div className="bg-white/80 border border-[#cbd5e1] w-[90%] mb-5 xl:w-[22vw] xl:h-full xl:min-h-[50vh]
+ rounded-2xl shadow-xl p-8 flex flex-col items-center transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-[#2563eb] gap-5">
           <h2 className="text-3xl font-bold text-[#2563eb] flex items-center gap-2 mb-2">
             <i className="fas fa-table text-[#22d3ee]"></i> Get Tabular View
           </h2>
@@ -83,14 +96,16 @@ export default function Homepage() {
             <li>Get Fast visuals</li>
           </ul>
           <button
-            className="mt-auto w-[80%] h-12 rounded-full bg-gradient-to-r from-[#2563eb] to-[#60a5fa] text-white font-bold shadow-lg hover:scale-105 hover:shadow-xl transition"
+            className="mt-auto w-[80%] h-12 rounded-full bg-gradient-to-r from-[#2563eb] to-[#60a5fa]  text-white font-bold shadow-lg hover:scale-105 hover:shadow-xl transition"
             onClick={handleDelivery}
           >
             Begin Now
           </button>
         </div>
 
-        <div className="bg-white/80 border border-[#cbd5e1] w-full xl:w-[22vw] h-[80%] rounded-2xl shadow-xl p-8 flex flex-col items-center transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-[#2563eb] gap-5">
+        {/* Convert CSV Card */}
+        <div className="bg-white/80 border border-[#cbd5e1] w-[90%] mb-5 xl:w-[22vw] xl:h-full xl:min-h-[50vh]
+ rounded-2xl shadow-xl p-8 flex flex-col items-center transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-[#2563eb] gap-5">
           <h2 className="text-3xl font-bold text-[#2563eb] flex items-center gap-2 mb-2">
             <i className="fas fa-file-csv text-[#facc15]"></i> Convert CSV File
           </h2>
@@ -113,4 +128,3 @@ export default function Homepage() {
     </div>
   );
 }
-// ...existing code...
