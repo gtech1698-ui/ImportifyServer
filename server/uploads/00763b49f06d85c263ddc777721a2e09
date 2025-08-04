@@ -1,0 +1,122 @@
+[
+  {
+    "id": "101",
+    "category": "Retail",
+    "mobile": "9876543210",
+    "delivery_date": "2024-07-15",
+    "status": "Delivered",
+    "city": "Mumbai",
+    "operator": "Airtel",
+    "state": "Maharashtra",
+    "circle": "West",
+    "user_id": "501"
+  },
+  {
+    "id": "102",
+    "category": "Electronics",
+    "mobile": "9123456789",
+    "delivery_date": "2024-07-16",
+    "status": "Pending",
+    "city": "Delhi",
+    "operator": "Jio",
+    "state": "Delhi",
+    "circle": "North",
+    "user_id": "502"
+  },
+  {
+    "id": "103",
+    "category": "Food",
+    "mobile": "9345678901",
+    "delivery_date": "2024-07-17",
+    "status": "Shipped",
+    "city": "Chennai",
+    "operator": "Vi",
+    "state": "Tamil Nadu",
+    "circle": "South",
+    "user_id": "503"
+  },
+  {
+    "id": "104",
+    "category": "Fashion",
+    "mobile": "9456789012",
+    "delivery_date": "2024-07-18",
+    "status": "Delivered",
+    "city": "Kolkata",
+    "operator": "BSNL",
+    "state": "West Bengal",
+    "circle": "East",
+    "user_id": "504"
+  },
+  {
+    "id": "105",
+    "category": "Automotive",
+    "mobile": "9567890123",
+    "delivery_date": "2024-07-19",
+    "status": "Cancelled",
+    "city": "Pune",
+    "operator": "Airtel",
+    "state": "Maharashtra",
+    "circle": "West",
+    "user_id": "505"
+  },
+  {
+    "id": "106",
+    "category": "Books",
+    "mobile": "9678901234",
+    "delivery_date": "2024-07-20",
+    "status": "Delivered",
+    "city": "Jaipur",
+    "operator": "Jio",
+    "state": "Rajasthan",
+    "circle": "North",
+    "user_id": "506"
+  },
+  {
+    "id": "107",
+    "category": "Home Decor",
+    "mobile": "9789012345",
+    "delivery_date": "2024-07-21",
+    "status": "Pending",
+    "city": "Hyderabad",
+    "operator": "Vi",
+    "state": "Telangana",
+    "circle": "South",
+    "user_id": "507"
+  },
+  {
+    "id": "108",
+    "category": "Furniture",
+    "mobile": "9890123456",
+    "delivery_date": "2024-07-22",
+    "status": "Shipped",
+    "city": "Ahmedabad",
+    "operator": "BSNL",
+    "state": "Gujarat",
+    "circle": "West",
+    "user_id": "508"
+  },
+  {
+    "id": "109",
+    "category": "Fitness",
+    "mobile": "9901234567",
+    "delivery_date": "2024-07-23",
+    "status": "Delivered",
+    "city": "Lucknow",
+    "operator": "Airtel",
+    "state": "Uttar Pradesh",
+    "circle": "North",
+    "user_id": "509"
+  },
+  {
+    "id": "110",
+    "category": "Gaming",
+    "mobile": "9012345678",
+    "delivery_date": "2024-07-24",
+    "status": "Pending",
+    "city": "Bangalore",
+    "operator": "Jio",
+    "state": "Karnataka",
+    "circle": "South",
+    "user_id": "510"
+  }
+]

@@ -1,0 +1,9 @@
+id,category,mobile,delivery_date,status,city,operator,state,circle,user_id
+9999979,testing,9818624070,01-06-2025,DELIVRD,shahdara,Null,delhi,Null,1100
+9999978,testing,9818624070,01-06-2025,DELIVRD,shahdara,Null,delhi,Null,1102
+9999977,testing,9818624070,01-06-2025,DELIVRD,shahdara,Null,delhi,Null,1103
+9999976,testing,9818624070,01-06-2025,DELIVRD,shahdara,Null,delhi,Null,1104
+9999975,testing,9818624070,01-06-2025,DELIVRD,shahdara,Null,delhi,Null,1105
+9999974,testing,9818624070,01-06-2025,DELIVRD,shahdara,Null,delhi,Null,1106
+9999973,testing,9818624070,01-06-2025,DELIVRD,shahdara,Null,delhi,Null,1107
+9999972,testing,9818624070,01-06-2025,DELIVRD,shahdara,Null,delhi,Null,1110
