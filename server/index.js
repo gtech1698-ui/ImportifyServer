@@ -384,9 +384,6 @@ app.post('/export/getFiles', wrapAsync(async (req, res) => {
     const conditions = [];
     const values = [];
 
-    if (!category && !status && !circle) {
-      return res.status(400).send('At least one filter must be provided');
-    }
     if (category) {
       conditions.push('category = ?');
       values.push(category.trim());
@@ -488,9 +485,6 @@ app.post('/data/query', wrapAsync(async (req, res) => {
 
   const filters = [];
   const values = [];
-  if (!category && !status && !circle) {
-    return res.status(400).send('At least one filter must be provided');
-  }
   if (category) {
     filters.push('category = ?');
     values.push(category.trim());
