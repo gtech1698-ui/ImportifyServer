@@ -410,7 +410,7 @@ app.post('/export/getFiles', wrapAsync(async (req, res) => {
 
     if (rows.length === 0) {
       console.warn('[EXPORT] No data found for filters:', req.body);
-      return res.status(404).send('No records found for the given filters.');
+      return res.status(404).send({message:'No Data found from the selected filters'});
     }
 
     const fileName = `export_${Date.now()}.${type}`;
