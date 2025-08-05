@@ -475,7 +475,7 @@ app.post('/export/getFiles', wrapAsync(async (req, res) => {
 
   } catch (err) {
     console.error('[EXPORT] Unexpected error:', err);
-    res.status(500).send(`Export failed: ${err.message}`);
+    res.status(500).send({message:err.message});
   }
 }));
 
