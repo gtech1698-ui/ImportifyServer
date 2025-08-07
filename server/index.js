@@ -167,6 +167,7 @@ app.post('/import/addFiles', upload.single('datafile'), wrapAsync(async (req, re
 
     await db.query('START TRANSACTION');
     try {
+      await db.query(`DROP TEMPORARY TABLE IF EXISTS deliveries_temp`);
       await db.query(`
         CREATE TEMPORARY TABLE deliveries_temp (
           category VARCHAR(255),
