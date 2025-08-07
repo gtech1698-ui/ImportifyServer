@@ -360,7 +360,7 @@ app.post('/import/addFiles', upload.single('datafile'), wrapAsync(async (req, re
         records_inserted: 0,
         status: 'failed',
         error: err.message || String(err),
-        duplicates:duplicateCount;
+        duplicates:duplicateCount
       });
 
       console.log(err);
