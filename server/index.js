@@ -282,7 +282,7 @@ app.post('/import/addFiles', upload.single('datafile'), wrapAsync(async (req, re
     try {
       const rows = await handleJSON(filePath);
       overwriteCircle(rows, prefixMap);
-      const insertedCount = await insertOrUpdateDeliveries(rows);
+      const { insertedCount, duplicateCount } = await insertOrUpdateDeliveries(rows);
 
       const performedAt = new Date().toISOString();
       const filesize = req.file.size;
@@ -341,27 +341,28 @@ app.post('/import/addFiles', upload.single('datafile'), wrapAsync(async (req, re
       });
 
 
-      await logUploadSummary({
-        file_name: filename,
-        user: user,
-        upload_count: 1,
-        records_inserted: insertedCount,
-        status: 'completed',
-        error: 'N/A',
-        duplicates: duplicateCount
-      });
+  await logUploadSummary({
+  file_name: filename,
+  user: user,
+  upload_count: 1,
+  records_inserted: 0,
+  status: 'completed',
+  error: 'N/A',
+  duplicates: 0
+});
 
       res.send(`✅ SQL Executed Successfully!`);
     } catch (err) {
-      await logUploadSummary({
-        file_name: req.file.originalname,
-        user: user,
-        upload_count: 1,
-        records_inserted: 0,
-        status: 'failed',
-        error: err.message || String(err),
-        duplicates:duplicateCount
-      });
+     await logUploadSummary({
+  file_name: filename,
+  user: user,
+  upload_count: 1,
+  records_inserted: 0,
+  status: 'completed',
+  error: 'N/A',
+  duplicates: 0
+});
+
 
       console.log(err);
       res.status(err.status || 500).send(`SQL Error: ${err.message}`);
@@ -369,15 +370,15 @@ app.post('/import/addFiles', upload.single('datafile'), wrapAsync(async (req, re
   }
 
   else {
-    await logUploadSummary({
-      file_name: req.file.originalname,
-      user: user,
-      upload_count: 1,
-      records_inserted: 0,
-      status: 'failed',
-      error: 'Unsupported file type',
-      duplicates:duplicateCount
-    });
+ await logUploadSummary({
+  file_name: req.file.originalName,
+  user: user,
+  upload_count: 1,
+  records_inserted: 0,
+  status: 'completed',
+  error: 'N/A',
+  duplicates: 0
+});
 
     res.status(400).send('Unsupported file type');
   }
