@@ -133,14 +133,14 @@ app.post('/import/addFiles', upload.single('datafile'), wrapAsync(async (req, re
     if (typeof user === 'string') {
       user = JSON.parse(user);
     }
-  } catch (e) {}
+  } catch (e) { }
 
-  async function logUploadSummary({ file_name, user, upload_count, records_inserted, status, error }) {
+  async function logUploadSummary({ file_name, user, upload_count, records_inserted, status, error, duplicates }) {
     const query = `
-      INSERT INTO UploadSummary
-        (file_name, user, upload_count, records_inserted, status, error, uploaded_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `;
+    INSERT INTO UploadSummary
+      (file_name, user, upload_count, records_inserted, status, error, uploaded_at, duplicates)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `;
     await db.query(query, [
       file_name,
       user && user.email ? user.email : (user && user.displayName ? user.displayName : String(user)),
@@ -148,7 +148,8 @@ app.post('/import/addFiles', upload.single('datafile'), wrapAsync(async (req, re
       records_inserted,
       status,
       error,
-      new Date()
+      new Date(),
+      duplicates || 0
     ]);
   }
 
@@ -166,21 +167,22 @@ app.post('/import/addFiles', upload.single('datafile'), wrapAsync(async (req, re
     ]);
 
     await db.query('START TRANSACTION');
+    let duplicateCount = 0;
+
     try {
-      await db.query(`DROP TEMPORARY TABLE IF EXISTS deliveries_temp`);
       await db.query(`
-        CREATE TEMPORARY TABLE deliveries_temp (
-          category VARCHAR(255),
-          mobile VARCHAR(20),
-          delivery_date DATE,
-          status VARCHAR(50),
-          city VARCHAR(100),
-          operator VARCHAR(100),
-          state VARCHAR(100),
-          circle VARCHAR(100),
-          user_id INT
-        )
-      `);
+      CREATE TEMPORARY TABLE deliveries_temp (
+        category VARCHAR(255),
+        mobile VARCHAR(20),
+        delivery_date DATE,
+        status VARCHAR(50),
+        city VARCHAR(100),
+        operator VARCHAR(100),
+        state VARCHAR(100),
+        circle VARCHAR(100),
+        user_id INT
+      )
+    `);
 
       const CHUNK_SIZE = 5000;
       for (let i = 0; i < values.length; i += CHUNK_SIZE) {
@@ -188,27 +190,35 @@ app.post('/import/addFiles', upload.single('datafile'), wrapAsync(async (req, re
         const placeholders = chunk.map(() => '(?, ?, ?, ?, ?, ?, ?, ?, ?)').join(', ');
         const flattened = chunk.flat();
         await db.execute(`
-          INSERT INTO deliveries_temp
-          (category, mobile, delivery_date, status, city, operator, state, circle, user_id)
-          VALUES ${placeholders}
-        `, flattened);
+        INSERT INTO deliveries_temp
+        (category, mobile, delivery_date, status, city, operator, state, circle, user_id)
+        VALUES ${placeholders}
+      `, flattened);
       }
 
+      // Count duplicates before insert
+      const [dupRows] = await db.query(`
+      SELECT COUNT(*) AS duplicateCount
+      FROM deliveries_temp dt
+      INNER JOIN deliveries d ON dt.mobile = d.mobile
+    `);
+      duplicateCount = dupRows[0].duplicateCount;
+
       await db.query(`
-        INSERT INTO deliveries
-        (category, mobile, delivery_date, status, city, operator, state, circle, user_id)
-        SELECT category, mobile, delivery_date, status, city, operator, state, circle, user_id
-        FROM deliveries_temp
-        ON DUPLICATE KEY UPDATE
-          category = VALUES(category),
-          delivery_date = VALUES(delivery_date),
-          status = VALUES(status),
-          city = VALUES(city),
-          operator = VALUES(operator),
-          state = VALUES(state),
-          circle = VALUES(circle),
-          user_id = VALUES(user_id)
-      `);
+      INSERT INTO deliveries
+      (category, mobile, delivery_date, status, city, operator, state, circle, user_id)
+      SELECT category, mobile, delivery_date, status, city, operator, state, circle, user_id
+      FROM deliveries_temp
+      ON DUPLICATE KEY UPDATE
+        category = VALUES(category),
+        delivery_date = VALUES(delivery_date),
+        status = VALUES(status),
+        city = VALUES(city),
+        operator = VALUES(operator),
+        state = VALUES(state),
+        circle = VALUES(circle),
+        user_id = VALUES(user_id)
+    `);
 
       await db.query('COMMIT');
     } catch (err) {
@@ -216,14 +226,14 @@ app.post('/import/addFiles', upload.single('datafile'), wrapAsync(async (req, re
       throw err;
     }
 
-    return values.length;
+    return { insertedCount: values.length, duplicateCount };
   };
 
   if (ext === 'csv') {
     try {
       const rows = await handleCSV(filePath);
       overwriteCircle(rows, prefixMap);
-      const insertedCount = await insertOrUpdateDeliveries(rows);
+      const { insertedCount, duplicateCount } = await insertOrUpdateDeliveries(rows);
 
       const performedAt = new Date().toISOString();
       const filesize = req.file.size;
@@ -237,13 +247,15 @@ app.post('/import/addFiles', upload.single('datafile'), wrapAsync(async (req, re
         filesize,
       });
 
+
       await logUploadSummary({
         file_name: filename,
         user: user,
         upload_count: 1,
         records_inserted: insertedCount,
         status: 'completed',
-        error: 'N/A'
+        error: 'N/A',
+        duplicates: duplicateCount
       });
 
       res.send(`✅ CSV Upload Successful! ${insertedCount} rows processed.`);
@@ -255,6 +267,7 @@ app.post('/import/addFiles', upload.single('datafile'), wrapAsync(async (req, re
         records_inserted: 0,
         status: 'failed',
         error: err.message || String(err)
+        duplicates:duplicateCount
       });
 
       console.error(`❌ CSV Import Error: ${err.message}`);
@@ -283,14 +296,17 @@ app.post('/import/addFiles', upload.single('datafile'), wrapAsync(async (req, re
         filesize,
       });
 
+
       await logUploadSummary({
         file_name: filename,
         user: user,
         upload_count: 1,
         records_inserted: insertedCount,
         status: 'completed',
-        error: 'N/A'
+        error: 'N/A',
+        duplicates: duplicateCount
       });
+
 
       res.send(`✅ JSON Upload Successful! ${insertedCount} rows processed.`);
     } catch (err) {
@@ -301,6 +317,7 @@ app.post('/import/addFiles', upload.single('datafile'), wrapAsync(async (req, re
         records_inserted: 0,
         status: 'failed',
         error: err.message || String(err)
+        duplicates:duplicateCount
       });
 
       console.log(err);
@@ -323,13 +340,15 @@ app.post('/import/addFiles', upload.single('datafile'), wrapAsync(async (req, re
         filesize,
       });
 
+
       await logUploadSummary({
         file_name: filename,
         user: user,
         upload_count: 1,
-        records_inserted: 0,
+        records_inserted: insertedCount,
         status: 'completed',
-        error: 'N/A'
+        error: 'N/A',
+        duplicates: duplicateCount
       });
 
       res.send(`✅ SQL Executed Successfully!`);
@@ -341,6 +360,7 @@ app.post('/import/addFiles', upload.single('datafile'), wrapAsync(async (req, re
         records_inserted: 0,
         status: 'failed',
         error: err.message || String(err)
+        duplicates:duplicateCount;
       });
 
       console.log(err);
@@ -356,6 +376,7 @@ app.post('/import/addFiles', upload.single('datafile'), wrapAsync(async (req, re
       records_inserted: 0,
       status: 'failed',
       error: 'Unsupported file type'
+      duplicates:duplicateCount
     });
 
     res.status(400).send('Unsupported file type');
