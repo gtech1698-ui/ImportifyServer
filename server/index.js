@@ -358,8 +358,8 @@ app.post('/import/addFiles', upload.single('datafile'), wrapAsync(async (req, re
   user: user,
   upload_count: 1,
   records_inserted: 0,
-  status: 'completed',
-  error: 'N/A',
+  status: 'failed',
+        error: err.message || String(err)
   duplicates: 0
 });
 
@@ -371,7 +371,7 @@ app.post('/import/addFiles', upload.single('datafile'), wrapAsync(async (req, re
 
   else {
  await logUploadSummary({
-  file_name: req.file.originalName,
+  file_name: req.file.originalname,
   user: user,
   upload_count: 1,
   records_inserted: 0,
