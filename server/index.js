@@ -129,16 +129,12 @@ app.post('/import/addFiles', upload.single('datafile'), wrapAsync(async (req, re
   const ext = req.file.originalname.split('.').pop();
   let user = req.body.user;
 
-  // Parse user if sent as JSON string
   try {
     if (typeof user === 'string') {
       user = JSON.parse(user);
     }
-  } catch (e) {
-    // fallback: keep as is
-  }
+  } catch (e) {}
 
-  // Helper function to log upload summary
   async function logUploadSummary({ file_name, user, upload_count, records_inserted, status, error }) {
     const query = `
       INSERT INTO UploadSummary
@@ -156,42 +152,78 @@ app.post('/import/addFiles', upload.single('datafile'), wrapAsync(async (req, re
     ]);
   }
 
+  const insertOrUpdateDeliveries = async (rows) => {
+    const values = rows.map(row => [
+      row.category.trim(),
+      row.mobile.trim(),
+      new Date(row.delivery_date).toISOString().split('T')[0],
+      row.status.trim(),
+      row.city || "Unknown",
+      row.operator || "Unknown",
+      row.state || "Unknown",
+      row.circle.trim(),
+      row.user_id ? parseInt(row.user_id) || 0 : 0
+    ]);
+
+    await db.query('START TRANSACTION');
+    try {
+      await db.query(`
+        CREATE TEMPORARY TABLE deliveries_temp (
+          category VARCHAR(255),
+          mobile VARCHAR(20),
+          delivery_date DATE,
+          status VARCHAR(50),
+          city VARCHAR(100),
+          operator VARCHAR(100),
+          state VARCHAR(100),
+          circle VARCHAR(100),
+          user_id INT
+        )
+      `);
+
+      const CHUNK_SIZE = 5000;
+      for (let i = 0; i < values.length; i += CHUNK_SIZE) {
+        const chunk = values.slice(i, i + CHUNK_SIZE);
+        const placeholders = chunk.map(() => '(?, ?, ?, ?, ?, ?, ?, ?, ?)').join(', ');
+        const flattened = chunk.flat();
+        await db.execute(`
+          INSERT INTO deliveries_temp
+          (category, mobile, delivery_date, status, city, operator, state, circle, user_id)
+          VALUES ${placeholders}
+        `, flattened);
+      }
+
+      await db.query(`
+        INSERT INTO deliveries
+        (category, mobile, delivery_date, status, city, operator, state, circle, user_id)
+        SELECT category, mobile, delivery_date, status, city, operator, state, circle, user_id
+        FROM deliveries_temp
+        ON DUPLICATE KEY UPDATE
+          category = VALUES(category),
+          delivery_date = VALUES(delivery_date),
+          status = VALUES(status),
+          city = VALUES(city),
+          operator = VALUES(operator),
+          state = VALUES(state),
+          circle = VALUES(circle),
+          user_id = VALUES(user_id)
+      `);
+
+      await db.query('COMMIT');
+    } catch (err) {
+      await db.query('ROLLBACK');
+      throw err;
+    }
+
+    return values.length;
+  };
+
   if (ext === 'csv') {
     try {
       const rows = await handleCSV(filePath);
       overwriteCircle(rows, prefixMap);
-      const values = rows.map(row => [
-        row.category.trim(),
-        row.mobile.trim(),
-        new Date(row.delivery_date).toISOString().split('T')[0],
-        row.status.trim(),
-        row.city ? row.city : "Unknown",
-        row.operator ? row.operator : "Unknown",
-        row.state ? row.state : "Unknown",
-        row.circle.trim(),
-        row.user_id ? parseInt(row.user_id) || 0 : 0
-      ]);
+      const insertedCount = await insertOrUpdateDeliveries(rows);
 
-      await db.query('START TRANSACTION');
-      let CHUNK_SIZE = 5000
-      try {
-        for (let i = 0; i < values.length; i += CHUNK_SIZE) {
-          const chunk = values.slice(i, i + CHUNK_SIZE);
-          const placeholders = chunk.map(() => '(?, ?, ?, ?, ?, ?, ?, ?, ?)').join(', ');
-          const flattened = chunk.flat();
-          const bulkQuery = `
-      INSERT INTO deliveries
-      (category, mobile, delivery_date, status, city, operator, state, circle, user_id)
-      VALUES ${placeholders}
-    `;
-          await db.execute(bulkQuery, flattened);
-        }
-
-        await db.query('COMMIT');
-      } catch (err) {
-        await db.query('ROLLBACK');
-        throw err;
-      }
       const performedAt = new Date().toISOString();
       const filesize = req.file.size;
       const filename = req.file.originalname;
@@ -204,26 +236,24 @@ app.post('/import/addFiles', upload.single('datafile'), wrapAsync(async (req, re
         filesize,
       });
 
-      // UploadSummary logging (success)
       await logUploadSummary({
         file_name: filename,
         user: user,
         upload_count: 1,
-        records_inserted: rows.length,
+        records_inserted: insertedCount,
         status: 'completed',
         error: 'N/A'
       });
 
-      res.send(`✅ CSV Upload Successful! ${rows.length} rows inserted.`);
+      res.send(`✅ CSV Upload Successful! ${insertedCount} rows processed.`);
     } catch (err) {
-      // UploadSummary logging (failure)
       await logUploadSummary({
         file_name: req.file.originalname,
         user: user,
         upload_count: 1,
         records_inserted: 0,
         status: 'failed',
-        error: err && err.message ? err.message : String(err)
+        error: err.message || String(err)
       });
 
       console.error(`❌ CSV Import Error: ${err.message}`);
@@ -238,38 +268,7 @@ app.post('/import/addFiles', upload.single('datafile'), wrapAsync(async (req, re
     try {
       const rows = await handleJSON(filePath);
       overwriteCircle(rows, prefixMap);
-      const values = rows.map(row => [
-        row.category.trim(),
-        row.mobile.trim(),
-        new Date(row.delivery_date).toISOString().split('T')[0],
-        row.status.trim(),
-        row.city ? row.city : "Unknown",
-        row.operator ? row.operator : "Unknown",
-        row.state ? row.state : "Unknown",
-        row.circle.trim(),
-        row.user_id ? parseInt(row.user_id) || 0 : 0
-      ]);
-
-      await db.query('START TRANSACTION');
-let CHUNK_SIZE = 5000
-      try {
-        for (let i = 0; i < values.length; i += CHUNK_SIZE) {
-          const chunk = values.slice(i, i + CHUNK_SIZE);
-          const placeholders = chunk.map(() => '(?, ?, ?, ?, ?, ?, ?, ?, ?)').join(', ');
-          const flattened = chunk.flat();
-          const bulkQuery = `
-      INSERT INTO deliveries
-      (category, mobile, delivery_date, status, city, operator, state, circle, user_id)
-      VALUES ${placeholders}
-    `;
-          await db.execute(bulkQuery, flattened);
-        }
-
-        await db.query('COMMIT');
-      } catch (err) {
-        await db.query('ROLLBACK');
-        throw err;
-      }
+      const insertedCount = await insertOrUpdateDeliveries(rows);
 
       const performedAt = new Date().toISOString();
       const filesize = req.file.size;
@@ -283,32 +282,29 @@ let CHUNK_SIZE = 5000
         filesize,
       });
 
-      // UploadSummary logging (success)
       await logUploadSummary({
         file_name: filename,
         user: user,
         upload_count: 1,
-        records_inserted: rows.length,
+        records_inserted: insertedCount,
         status: 'completed',
         error: 'N/A'
       });
 
-      res.send(`✅ JSON Upload Successful! ${rows.length} rows inserted.`);
+      res.send(`✅ JSON Upload Successful! ${insertedCount} rows processed.`);
     } catch (err) {
-      // UploadSummary logging (failure)
       await logUploadSummary({
         file_name: req.file.originalname,
         user: user,
         upload_count: 1,
         records_inserted: 0,
         status: 'failed',
-        error: err && err.message ? err.message : String(err)
+        error: err.message || String(err)
       });
 
-      console.log(err)
+      console.log(err);
       res.status(err.status || 500).send(`Import failed: ${err.message}`);
     }
-
   }
 
   else if (ext === 'sql') {
@@ -321,12 +317,11 @@ let CHUNK_SIZE = 5000
         db,
         activity: 'Import',
         performedAt,
-        fieldnumber: 0, // since SQL format doesn't include field count
+        fieldnumber: 0,
         filename,
         filesize,
       });
 
-      // UploadSummary logging (success)
       await logUploadSummary({
         file_name: filename,
         user: user,
@@ -338,25 +333,21 @@ let CHUNK_SIZE = 5000
 
       res.send(`✅ SQL Executed Successfully!`);
     } catch (err) {
-      // UploadSummary logging (failure)
       await logUploadSummary({
         file_name: req.file.originalname,
         user: user,
         upload_count: 1,
         records_inserted: 0,
         status: 'failed',
-        error: err && err.message ? err.message : String(err)
+        error: err.message || String(err)
       });
 
-      console.log(err)
+      console.log(err);
       res.status(err.status || 500).send(`SQL Error: ${err.message}`);
     }
-
   }
 
   else {
-
-    // UploadSummary logging (failure)
     await logUploadSummary({
       file_name: req.file.originalname,
       user: user,
@@ -369,7 +360,6 @@ let CHUNK_SIZE = 5000
     res.status(400).send('Unsupported file type');
   }
 }));
-
 
 app.post('/export/getFiles', wrapAsync(async (req, res) => {
   try {
