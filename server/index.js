@@ -755,7 +755,7 @@ app.post('/data/failed', wrapAsync(async (req, res) => {
 app.post('/uploadsummary', async (req, res) => {
   const { limit = 100, offset = 0, preload = false } = req.body;
   const query = `
-        SELECT file_name, user, upload_count, records_inserted, status, error, uploaded_at
+        SELECT file_name, user, upload_count, records_inserted, status, error, uploaded_at,duplicates
         FROM UploadSummary
         ORDER BY uploaded_at DESC
         LIMIT ? OFFSET ?
