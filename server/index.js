@@ -375,7 +375,7 @@ app.post('/import/addFiles', upload.single('datafile'), wrapAsync(async (req, re
   user: user,
   upload_count: 1,
   records_inserted: 0,
-  status: 'completed',
+  status: 'failed',
   error: 'N/A',
   duplicates: 0
 });
