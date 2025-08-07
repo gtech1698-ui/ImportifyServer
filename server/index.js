@@ -411,7 +411,7 @@ app.post('/export/getFiles', wrapAsync(async (req, res) => {
     }
 
     const whereClause = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
-    const sql = `SELECT * FROM deliveries ${whereClause} LIMIT ?`;
+    const sql = `SELECT id,category,mobile delivery_date,status,circle,created_at FROM deliveries ${whereClause} LIMIT ?`;
     const DEFAULT_LIMIT = 1000;
     const parsedLimit = parseInt(limit);
     values.push(Number.isNaN(parsedLimit) ? DEFAULT_LIMIT : parsedLimit);
