@@ -751,7 +751,11 @@ app.post('/uploadsummary', async (req, res) => {
   res.json({ currentPage, nextPage, totalCount });
 });
 
-
+app.get('/dataCount',wrapAsync(async(req,res)=>{
+  let [response] =await db.query('SELECT COUNT(*) AS totalCount FROM deliveries')
+   const count = response[0]?.totalCount || 0;
+  res.json({count});
+}))
 
 // Handle unmatched routes
 app.use((req, res, next) => {
